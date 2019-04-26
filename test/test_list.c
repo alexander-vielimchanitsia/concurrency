@@ -56,6 +56,15 @@ int main()
     list_free(removed);
     print_list(list);
 
+    printf("Test remove from an empty list\n");
+    removed = list_remove(&list, 0);
+    printf("Removed: \"%s\"\n", removed->data);
+    removed = list_remove(&list, 0);
+    printf("Removed: \"%s\"\n", removed->data);
+    removed = list_remove(&list, 0);
+    printf("Removed: \"%s\"\n", removed);
+    print_list(list);
+
     list_free(list);
     return 0;
 }
