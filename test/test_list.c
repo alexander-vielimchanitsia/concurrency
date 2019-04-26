@@ -45,7 +45,15 @@ int main()
     printf("\n========================\n\n");
 
     printf("Push into NULL list:\n");
-    list_push(&list, "new_item");
+    list_push(&list, "new_item1");
+    list_push(&list, "new_item2");
+    list_push(&list, "new_item3");
+    print_list(list);
+
+    printf("Remove by index 1\n");
+    list_node_t *removed = list_remove(&list, 1);
+    printf("Removed: \"%s\"\n", removed->data);
+    list_free(removed);
     print_list(list);
 
     list_free(list);

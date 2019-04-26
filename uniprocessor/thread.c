@@ -181,7 +181,6 @@ thread_exit(void *ret)
         joiner->join_id = -1;
         if (!MFQueue_push(scheduler->ready_list, joiner)) {
             printf("thread_exit: failed to move waiting thread to ready list - list is full, thread=%lu\n", joiner->id);
-            // stop the process because deadlock probability
             exit(1);
         }
     }

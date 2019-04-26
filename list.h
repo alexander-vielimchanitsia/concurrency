@@ -9,6 +9,7 @@ typedef struct ListNode {
 extern list_node_t *list_create(void *data);
 extern void list_push(list_node_t **list, void *data);
 extern list_node_t *list_pop(list_node_t **list);
+extern list_node_t *list_remove(list_node_t **list, int index);
 extern void list_free(list_node_t *list);
 
 #endif

@@ -1,6 +1,7 @@
-#include <stdlib.h>
-
 #include "list.h"
+
+#include <stdio.h>
+#include <stdlib.h>
 
 
 list_node_t *
@@ -49,6 +50,41 @@ list_pop(list_node_t **list)
         prev->next = NULL;
     else
         *list = NULL;
+    return node;
+}
+
+
+/*
+ Remove a node by its index.
+ */
+list_node_t *
+list_remove(list_node_t **list, int index)
+{
+    if (*list == NULL)
+        return NULL;
+
+    if (index < 0) {
+        printf("list_remove: incorrect index - %d\n", index);
+        return NULL;
+    }
+
+    list_node_t *node = NULL;
+    list_node_t *current_node = *list;
+    list_node_t *prev_node = NULL;
+
+    for (int i = 0; current_node != NULL; i++) {
+        if (index == i) {
+            if (prev_node != NULL) {
+                prev_node->next = current_node->next;
+            }
+            node = current_node;
+            node->next = NULL;
+            break;
+        }
+        prev_node = current_node;
+        current_node = current_node->next;
+    }
+
     return node;
 }
 

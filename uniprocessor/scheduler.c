@@ -1,3 +1,5 @@
+#include "scheduler.h"
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -5,7 +7,6 @@
 #include "../list.h"
 #include "tcb.h"
 #include "thread.h"
-#include "scheduler.h"
 #include "queue.h"
 
 
@@ -41,6 +42,10 @@ scheduler_start()
     scheduler->current_tcb = tcb_create();
     // TODO: figure out why do we need to add 105 to the size! error in swapcontext otherwise
     scheduler->current_tcb->context = malloc(sizeof(*scheduler->current_tcb->context)+105);
+    if (!scheduler->current_tcb->context) {
+        printf("Failed to allocate context for the main thread.\n");
+        exit(1);
+    }
     scheduler->current_tcb->state = THREAD_STATE_RUNNING;
 
     // TODO: start timer interrupt
@@ -88,5 +93,19 @@ schedule()
     } else {
         printf("schedule: nothing else to run, continue to run current thread.\n");
     }
+}
+
+
+void
+disable_interrups()
+{
+    // TODO: still should save any interrupts, but handle them when the interrupts are enabled
+}
+
+
+void
+enable_interrupts()
+{
+
 }
 
