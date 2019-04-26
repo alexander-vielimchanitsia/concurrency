@@ -168,13 +168,14 @@ thread_exit(void *ret)
 
     // wake up joiner, if any
     tcb_t *joiner = NULL;
-    list_node_t *waiting_thread = NULL;
-    for (waiting_thread = scheduler->waiting_list; waiting_thread; waiting_thread = waiting_thread->next) {
+    list_node_t *waiting_thread = scheduler->waiting_list;
+    for (int i = 0; waiting_thread; i++) {
         if (waiting_thread->data && ((tcb_t *)waiting_thread->data)->join_id == scheduler->current_tcb->id) {
             joiner = waiting_thread->data;
-            // TODO: remove it from the waiting list
+            list_remove(&scheduler->waiting_list, i);
             break;
         }
+        waiting_thread = waiting_thread->next;
     }
     if (joiner) {
         joiner->state = THREAD_STATE_READY;
