@@ -38,7 +38,6 @@ typedef struct {
     short int state;
     void *result;
     thread_t join_id;
-
 } tcb_t;
 
 
@@ -47,5 +46,6 @@ extern tcb_t *get_tcb(thread_t *thread);
 extern void tcb_free(tcb_t *tcb);
 extern ucontext_t *context_create();
 extern void context_free(ucontext_t *context);
+extern int get_thread_time_quantum(tcb_t *tcb);
 
 #endif

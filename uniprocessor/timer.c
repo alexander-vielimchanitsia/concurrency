@@ -1,24 +1,22 @@
-#include <time.h>
+#include "timer.h"
+
+#include <signal.h>
 #include <sys/time.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <inttypes.h>
 
 
-static void clock_tick(int signo)
+void
+set_timer(int time)
 {
-    printf("clock tick!!\n");
+    struct itimerval timer;
+    timer.it_interval.tv_sec = 0;
+    timer.it_interval.tv_usec = 0;
+    timer.it_value.tv_sec = 0;
+    timer.it_value.tv_usec = time;
+    setitimer(ITIMER_REAL, &timer, NULL);
 }
 
-
-void timer_init()
+void
+cancel_timer()
 {
-    signal(SIGALRM, clock_tick);
-
-    struct itimerval tv;
-    tv.it_interval.tv_sec = 0;
-    tv.it_interval.tv_usec = 100000;  // when timer expires, reset to 100ms
-    tv.it_value.tv_sec = 0;
-    tv.it_value.tv_usec = 100000;
-    setitimer(ITIMER_REAL, &tv, NULL);
+    set_timer(0);
 }

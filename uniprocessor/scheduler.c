@@ -7,11 +7,13 @@
 #include "../list.h"
 #include "tcb.h"
 #include "thread.h"
+#include "timer.h"
 #include "queue.h"
 
 
 scheduler_t *scheduler = NULL;
 
+static int _interrupts_enabled = 1;
 
 /*
  We enter as old_thread, but we return as new_thread.
@@ -27,11 +29,29 @@ _thread_switch(tcb_t *old_thread, tcb_t *new_thread)
     // return;
 
     // TODO: remove it (only for prototype)
-    printf("_thread_switch - from: %lu | to: %lu\n", old_thread->id, new_thread->id);
     swapcontext(old_thread->context, new_thread->context);
-    printf("after switch!\n");
 }
 
+
+void
+_timer_interrupt_handler()
+{
+    // TODO: still should save any interrupts, but handle them when the interrupts are enabled
+    if (!_interrupts_enabled)
+        return;
+
+    if (scheduler->current_tcb->state != THREAD_STATE_RUNNING) {
+        printf("_timer_interrupt_handler: something went wrong - current thread is not running.\n");
+        exit(-1);
+    }
+
+    // move to a lower priority when the thread has more work to do than the time quantum
+    if (scheduler->current_tcb->priority != MAX_READY_LIST_PRIORITY)
+        scheduler->current_tcb->priority++;
+
+    // TODO: maybe better to update data in stack frame of the interrupt?
+    schedule();
+}
 
 void
 scheduler_start()
@@ -48,7 +68,9 @@ scheduler_start()
     }
     scheduler->current_tcb->state = THREAD_STATE_RUNNING;
 
-    // TODO: start timer interrupt
+    // timer interrupt
+    signal(SIGALRM, _timer_interrupt_handler);
+    set_timer(get_thread_time_quantum(scheduler->current_tcb));
 }
 
 
@@ -89,6 +111,7 @@ schedule()
         next_thread->state = THREAD_STATE_RUNNING;
         current_tcb = scheduler->current_tcb;
         scheduler->current_tcb = next_thread;
+        set_timer(get_thread_time_quantum(scheduler->current_tcb));
         _thread_switch(current_tcb, next_thread);
     } else {
         printf("schedule: nothing else to run, continue to run current thread.\n");
@@ -99,13 +122,13 @@ schedule()
 void
 disable_interrups()
 {
-    // TODO: still should save any interrupts, but handle them when the interrupts are enabled
+    _interrupts_enabled = 0;
 }
 
 
 void
 enable_interrupts()
 {
-
+    _interrupts_enabled = 1;
 }
 

@@ -7,4 +7,5 @@ compile:
 	   scheduler.c \
 	   tcb.c \
 	   thread.c \
+	   timer.c \
 	   ../list.c \

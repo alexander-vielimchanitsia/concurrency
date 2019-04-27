@@ -79,3 +79,15 @@ context_free(ucontext_t *context)
         free(context);
     }
 }
+
+
+int
+get_thread_time_quantum(tcb_t *tcb)
+{
+    if (tcb->priority == 1) return 10000;
+    if (tcb->priority == 2) return 20000;
+    if (tcb->priority == 3) return 40000;
+    if (tcb->priority == 4) return 80000;
+    if (tcb->priority == 5) return 100000;
+    return 100000;
+}
